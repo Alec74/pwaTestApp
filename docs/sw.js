@@ -40,26 +40,23 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// On fetch, intercept server requests
-// and respond with cached responses instead of going to network
-self.addEventListener("fetch", (event) => {
-  // As a single page app, direct app to always go to cached home page.
-  if (event.request.mode === "navigate") {
-    event.respondWith(caches.match("/"));
-    return;
-  }
 
-  // For all other requests, go to the cache first, and then the network.
-  event.respondWith(
-    (async () => {
-      const cache = await caches.open(CACHE_NAME);
-      const cachedResponse = await cache.match(event.request);
-      if (cachedResponse) {
-        // Return the cached response if it's available.
-        return cachedResponse;
+//Fix for the user refreshing the page breaking the app issue
+self.addEventListener('message', messageEvent => {
+  if (messageEvent.data === 'skipWaiting') return skipWaiting();
+});
+
+self.addEventListener('fetch', event => {
+  event.respondWith((async () => {
+      if (event.request.mode === "navigate" &&
+      event.request.method === "GET" &&
+      registration.waiting &&
+      (await clients.matchAll()).length < 2
+      ) {
+          registration.waiting.postMessage('skipWaiting');
+          return new Response("", {headers: {"Refresh": "0"}});
       }
-      // If resource isn't in the cache, return a 404.
-      return new Response(null, { status: 404 });
-    })()
-  );
+      return await caches.match(event.request) ||
+      fetch(event.request);
+  })());
 });
