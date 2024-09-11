@@ -1,16 +1,18 @@
 // The version of the cache.
 const VERSION = "v1";
 
+const GHPATH = '/pwaTestApp';
+
 // The name of the cache
 const CACHE_NAME = `period-tracker-${VERSION}`;
 
 // The static resources that the app needs to function.
 const APP_STATIC_RESOURCES = [
-  "/",
-  "/index.html",
-  "/app.js",
-  "/style.css",
-  "/icons/wheel.svg",
+  `${GHPATH}/`,
+  `${GHPATH}/index.html`,
+  `${GHPATH}/app.js`,
+  `${GHPATH}/style.css`,
+  `${GHPATH}/icons/wheel.svg`,
 ];
 
 // On install, cache the static resources
