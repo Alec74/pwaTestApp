@@ -1,5 +1,5 @@
 // The version of the cache.
-const VERSION = "v1";
+const VERSION = "v2";
 
 const GHPATH = '/pwaTestApp';
 
